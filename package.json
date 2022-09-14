@@ -1,28 +1,10 @@
 {
-  "name": "type-is",
-  "description": "Infer the content-type of a request.",
-  "version": "1.6.18",
-  "contributors": [
-    "Douglas Christopher Wilson <doug@somethingdoug.com>",
-    "Jonathan Ong <me@jongleberry.com> (http://jongleberry.com)"
-  ],
+  "name": "request-type-is",
+  "description": "Infer the content-type of a request using Fetch API interfaces.",
+  "version": "0.0.5",
+  "author": "Josep Galearez",
   "license": "MIT",
-  "repository": "jshttp/type-is",
-  "dependencies": {
-    "media-typer": "0.3.0",
-    "mime-types": "~2.1.34"
-  },
-  "devDependencies": {
-    "eslint": "7.32.0",
-    "eslint-config-standard": "14.1.1",
-    "eslint-plugin-import": "2.25.4",
-    "eslint-plugin-markdown": "2.2.1",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "5.2.0",
-    "eslint-plugin-standard": "4.1.0",
-    "mocha": "9.2.1",
-    "nyc": "15.1.0"
-  },
+  "repository": "galearez/request-type-is",
   "engines": {
     "node": ">= 0.6"
   },
@@ -37,9 +19,20 @@
     "test-ci": "nyc --reporter=lcovonly --reporter=text npm test",
     "test-cov": "nyc --reporter=html --reporter=text npm test"
   },
+  "dependencies": {
+    "media-typer": "0.3.0",
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "nyc": "15.1.0"
+  },
   "keywords": [
-    "content",
+    "type-is",
+    "typeis",
+    "request",
     "type",
+    "content",
     "checking"
   ]
 }
