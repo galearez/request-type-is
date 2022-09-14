@@ -169,7 +169,7 @@ function typeis(value, types_) {
   // support flattened arguments
   if (types && !Array.isArray(types)) {
     types = new Array(arguments.length - 1);
-    for (i = 0; i < types.length; i++) {
+    for (i = 0; i < types.length; i += 1) {
       types[i] = arguments[i + 1];
     }
   }
@@ -180,7 +180,7 @@ function typeis(value, types_) {
   }
 
   let type;
-  for (i = 0; i < types.length; i++) {
+  for (i = 0; i < types.length; i += 1) {
     if (mimeMatch(normalize((type = types[i])), val)) {
       return type[0] === '+' || type.indexOf('*') !== -1 ? val : type;
     }
@@ -246,7 +246,7 @@ function typeofrequest(req, types_) {
   // support flattened arguments
   if (arguments.length > 2) {
     types = new Array(arguments.length - 1);
-    for (let i = 0; i < types.length; i++) {
+    for (let i = 0; i < types.length; i += 1) {
       types[i] = arguments[i + 1];
     }
   }
