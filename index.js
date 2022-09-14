@@ -14,15 +14,129 @@ const typer = require('media-typer');
 const mime = require('mime-types');
 
 /**
- * Module exports.
+ * Normalize a type and remove parameters.
+ *
+ * @param {string} value
+ * @return {string}
+ * @private
+ */
+
+function normalizeType(value) {
+  // parse the type
+  const type = typer.parse(value);
+
+  // remove the parameters
+  type.parameters = undefined;
+
+  // reformat it
+  return typer.format(type);
+}
+
+/**
+ * Try to normalize a type and remove parameters.
+ *
+ * @param {string} value
+ * @return {string}
+ * @private
+ */
+
+function tryNormalizeType(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return normalizeType(value);
+  } catch (err) {
+    return null;
+  }
+}
+
+/**
+ * Normalize a mime type.
+ * If it's a shorthand, expand it to a valid mime type.
+ *
+ * In general, you probably want:
+ *
+ *   const type = is(req, ['urlencoded', 'json', 'multipart']);
+ *
+ * Then use the appropriate body parsers.
+ * These three are the most common request body types
+ * and are thus ensured to work.
+ *
+ * @param {String} type
+ * @return {String|false|null}
  * @public
  */
 
-module.exports = typeofrequest;
-module.exports.is = typeis;
-module.exports.hasBody = hasbody;
-module.exports.normalize = normalize;
-module.exports.match = mimeMatch;
+function normalize(type) {
+  if (typeof type !== 'string') {
+    // invalid type
+    return false;
+  }
+
+  switch (type) {
+    case 'urlencoded':
+      return 'application/x-www-form-urlencoded';
+    case 'multipart':
+      return 'multipart/*';
+  }
+
+  if (type[0] === '+') {
+    // "+json" -> "*/*+json" expando
+    return '*/*' + type;
+  }
+
+  return type.indexOf('/') === -1 ? mime.lookup(type) : type;
+}
+
+/**
+ * Check if `expected` mime type
+ * matches `actual` mime type with
+ * wildcard and +suffix support.
+ *
+ * @param {String} expected
+ * @param {String} actual
+ * @return {Boolean}
+ * @public
+ */
+
+function mimeMatch(expected, actual) {
+  // invalid type
+  if (expected === false) {
+    return false;
+  }
+
+  // split types
+  const actualParts = actual.split('/');
+  const expectedParts = expected.split('/');
+
+  // invalid format
+  if (actualParts.length !== 2 || expectedParts.length !== 2) {
+    return false;
+  }
+
+  // validate type
+  if (expectedParts[0] !== '*' && expectedParts[0] !== actualParts[0]) {
+    return false;
+  }
+
+  // validate suffix wildcard
+  if (expectedParts[1].substr(0, 2) === '*+') {
+    return (
+      expectedParts[1].length <= actualParts[1].length + 1 &&
+      expectedParts[1].substr(1) ===
+        actualParts[1].substr(1 - expectedParts[1].length)
+    );
+  }
+
+  // validate subtype
+  if (expectedParts[1] !== '*' && expectedParts[1] !== actualParts[1]) {
+    return false;
+  }
+
+  return true;
+}
 
 /**
  * Compare a `value` content-type with `types`.
@@ -141,126 +255,12 @@ function typeofrequest(req, types_) {
 }
 
 /**
- * Normalize a mime type.
- * If it's a shorthand, expand it to a valid mime type.
- *
- * In general, you probably want:
- *
- *   const type = is(req, ['urlencoded', 'json', 'multipart']);
- *
- * Then use the appropriate body parsers.
- * These three are the most common request body types
- * and are thus ensured to work.
- *
- * @param {String} type
- * @return {String|false|null}
+ * Module exports.
  * @public
  */
 
-function normalize(type) {
-  if (typeof type !== 'string') {
-    // invalid type
-    return false;
-  }
-
-  switch (type) {
-    case 'urlencoded':
-      return 'application/x-www-form-urlencoded';
-    case 'multipart':
-      return 'multipart/*';
-  }
-
-  if (type[0] === '+') {
-    // "+json" -> "*/*+json" expando
-    return '*/*' + type;
-  }
-
-  return type.indexOf('/') === -1 ? mime.lookup(type) : type;
-}
-
-/**
- * Check if `expected` mime type
- * matches `actual` mime type with
- * wildcard and +suffix support.
- *
- * @param {String} expected
- * @param {String} actual
- * @return {Boolean}
- * @public
- */
-
-function mimeMatch(expected, actual) {
-  // invalid type
-  if (expected === false) {
-    return false;
-  }
-
-  // split types
-  const actualParts = actual.split('/');
-  const expectedParts = expected.split('/');
-
-  // invalid format
-  if (actualParts.length !== 2 || expectedParts.length !== 2) {
-    return false;
-  }
-
-  // validate type
-  if (expectedParts[0] !== '*' && expectedParts[0] !== actualParts[0]) {
-    return false;
-  }
-
-  // validate suffix wildcard
-  if (expectedParts[1].substr(0, 2) === '*+') {
-    return (
-      expectedParts[1].length <= actualParts[1].length + 1 &&
-      expectedParts[1].substr(1) ===
-        actualParts[1].substr(1 - expectedParts[1].length)
-    );
-  }
-
-  // validate subtype
-  if (expectedParts[1] !== '*' && expectedParts[1] !== actualParts[1]) {
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Normalize a type and remove parameters.
- *
- * @param {string} value
- * @return {string}
- * @private
- */
-
-function normalizeType(value) {
-  // parse the type
-  const type = typer.parse(value);
-
-  // remove the parameters
-  type.parameters = undefined;
-
-  // reformat it
-  return typer.format(type);
-}
-
-/**
- * Try to normalize a type and remove parameters.
- *
- * @param {string} value
- * @return {string}
- * @private
- */
-
-function tryNormalizeType(value) {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    return normalizeType(value);
-  } catch (err) {
-    return null;
-  }
-}
+module.exports = typeofrequest;
+module.exports.is = typeis;
+module.exports.hasBody = hasbody;
+module.exports.normalize = normalize;
+module.exports.match = mimeMatch;
