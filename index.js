@@ -80,6 +80,7 @@ function normalize(type) {
       return 'application/x-www-form-urlencoded';
     case 'multipart':
       return 'multipart/*';
+    default:
   }
 
   if (type[0] === '+') {
