@@ -125,9 +125,10 @@ function mimeMatch(expected, actual) {
   // validate suffix wildcard
   if (expectedParts[1].substr(0, 2) === '*+') {
     return (
-      expectedParts[1].length <= actualParts[1].length + 1 &&
-      expectedParts[1].substr(1) ===
-        actualParts[1].substr(1 - expectedParts[1].length)
+      // prettier-ignore
+      expectedParts[1].length <= actualParts[1].length + 1
+      && expectedParts[1].substr(1)
+      === actualParts[1].substr(1 - expectedParts[1].length)
     );
   }
 
@@ -202,8 +203,9 @@ function typeis(value, types_) {
 
 function hasbody(req) {
   return (
-    req.headers['transfer-encoding'] !== undefined ||
-    !isNaN(req.headers['content-length'])
+    // prettier-ignore
+    req.headers['transfer-encoding'] !== undefined
+    || !isNaN(req.headers['content-length'])
   );
 }
 
