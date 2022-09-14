@@ -154,9 +154,8 @@ function mimeMatch(expected, actual) {
  * @public
  */
 
-function typeis(value, types_) {
+function typeis(value, ...types_) {
   let i;
-  let types = types_;
 
   // remove parameters and normalize
   const val = tryNormalizeType(value);
@@ -166,13 +165,8 @@ function typeis(value, types_) {
     return false;
   }
 
-  // support flattened arguments
-  if (types && !Array.isArray(types)) {
-    types = new Array(arguments.length - 1);
-    for (i = 0; i < types.length; i += 1) {
-      types[i] = arguments[i + 1];
-    }
-  }
+  // flatten arguments of string[]
+  const types = [].concat(...types_);
 
   // no types, return the content type
   if (!types || !types.length) {
@@ -242,7 +236,7 @@ function typeofrequest(req, ...types_) {
     return null;
   }
 
-  // flatten array arguments
+  // flatten arguments of string[]
   const types = [].concat(...types_);
 
   // request content type
