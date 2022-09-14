@@ -206,7 +206,7 @@ function hasbody(req) {
   return (
     // prettier-ignore
     req.headers['transfer-encoding'] !== undefined
-    || !isNaN(req.headers['content-length'])
+    || !Number.isNaN(Number(req.headers['content-length']))
   );
 }
 
