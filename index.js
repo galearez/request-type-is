@@ -181,7 +181,8 @@ function typeis(value, types_) {
 
   let type;
   for (i = 0; i < types.length; i += 1) {
-    if (mimeMatch(normalize((type = types[i])), val)) {
+    type = types[i];
+    if (mimeMatch(normalize(type), val)) {
       return type[0] === '+' || type.indexOf('*') !== -1 ? val : type;
     }
   }
