@@ -1,7 +1,8 @@
 /*!
- * type-is
+ * request-type-is
  * Copyright(c) 2014 Jonathan Ong
  * Copyright(c) 2014-2015 Douglas Christopher Wilson
+ * Copyright(c) 2022 Josep Galearez
  * MIT Licensed
  */
 
@@ -18,6 +19,8 @@ const mime = require('mime-types');
  *
  * @param {string} value
  * @return {string}
+ * @throws TypeError If the given type string is invalid
+ * @throws TypeError If any of the given object values are invalid
  * @private
  */
 
@@ -30,13 +33,14 @@ function normalizeType(value) {
 
   // reformat it
   return typer.format(type);
+  // flatten arguments of string[]
 }
 
 /**
  * Try to normalize a type and remove parameters.
  *
  * @param {string} value
- * @return {string}
+ * @return {string | null}
  * @private
  */
 
@@ -64,8 +68,8 @@ function tryNormalizeType(value) {
  * These three are the most common request body types
  * and are thus ensured to work.
  *
- * @param {String} type
- * @return {String|false|null}
+ * @param {string} type
+ * @return {string | false | null}
  * @public
  */
 
@@ -96,9 +100,9 @@ function normalize(type) {
  * matches `actual` mime type with
  * wildcard and +suffix support.
  *
- * @param {String} expected
- * @param {String} actual
- * @return {Boolean}
+ * @param {string} expected
+ * @param {string} actual
+ * @return {boolean}
  * @public
  */
 
@@ -149,8 +153,9 @@ function mimeMatch(expected, actual) {
  * If no types match, `false` is returned.
  * Otherwise, the first `type` that matches is returned.
  *
- * @param {String} value
- * @param {Array} types
+ * @param {string} value
+ * @param {string[]} types_
+ * @param {false | string}
  * @public
  */
 
@@ -191,8 +196,8 @@ function typeis(value, ...types_) {
  * or `content-length` headers set.
  * http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.3
  *
- * @param {Object} request
- * @return {Boolean}
+ * @param {object} req
+ * @return {boolean}
  * @public
  */
 
@@ -225,8 +230,9 @@ function hasbody(req) {
  *
  *     this.is('html'); // => false
  *
- * @param {String|Array} types...
- * @return {String|false|null}
+ * @param {object}
+ * @param {string[]} types_
+ * @return {string | false | null}
  * @public
  */
 
