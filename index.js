@@ -10,8 +10,8 @@
  * @private
  */
 
-var typer = require('media-typer');
-var mime = require('mime-types');
+const typer = require('media-typer');
+const mime = require('mime-types');
 
 /**
  * Module exports.
@@ -39,11 +39,11 @@ module.exports.match = mimeMatch;
  */
 
 function typeis(value, types_) {
-  var i;
-  var types = types_;
+  let i;
+  let types = types_;
 
   // remove parameters and normalize
-  var val = tryNormalizeType(value);
+  const val = tryNormalizeType(value);
 
   // no type or invalid
   if (!val) {
@@ -63,7 +63,7 @@ function typeis(value, types_) {
     return val;
   }
 
-  var type;
+  let type;
   for (i = 0; i < types.length; i++) {
     if (mimeMatch(normalize((type = types[i])), val)) {
       return type[0] === '+' || type.indexOf('*') !== -1 ? val : type;
@@ -119,7 +119,7 @@ function hasbody(req) {
  */
 
 function typeofrequest(req, types_) {
-  var types = types_;
+  let types = types_;
 
   // no body
   if (!hasbody(req)) {
@@ -129,13 +129,13 @@ function typeofrequest(req, types_) {
   // support flattened arguments
   if (arguments.length > 2) {
     types = new Array(arguments.length - 1);
-    for (var i = 0; i < types.length; i++) {
+    for (let i = 0; i < types.length; i++) {
       types[i] = arguments[i + 1];
     }
   }
 
   // request content type
-  var value = req.headers['content-type'];
+  const value = req.headers['content-type'];
 
   return typeis(value, types);
 }
@@ -146,7 +146,7 @@ function typeofrequest(req, types_) {
  *
  * In general, you probably want:
  *
- *   var type = is(req, ['urlencoded', 'json', 'multipart']);
+ *   const type = is(req, ['urlencoded', 'json', 'multipart']);
  *
  * Then use the appropriate body parsers.
  * These three are the most common request body types
@@ -196,8 +196,8 @@ function mimeMatch(expected, actual) {
   }
 
   // split types
-  var actualParts = actual.split('/');
-  var expectedParts = expected.split('/');
+  const actualParts = actual.split('/');
+  const expectedParts = expected.split('/');
 
   // invalid format
   if (actualParts.length !== 2 || expectedParts.length !== 2) {
@@ -236,7 +236,7 @@ function mimeMatch(expected, actual) {
 
 function normalizeType(value) {
   // parse the type
-  var type = typer.parse(value);
+  const type = typer.parse(value);
 
   // remove the parameters
   type.parameters = undefined;
