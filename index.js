@@ -236,21 +236,14 @@ function hasbody(req) {
  * @public
  */
 
-function typeofrequest(req, types_) {
-  let types = types_;
-
+function typeofrequest(req, ...types_) {
   // no body
   if (!hasbody(req)) {
     return null;
   }
 
-  // support flattened arguments
-  if (arguments.length > 2) {
-    types = new Array(arguments.length - 1);
-    for (let i = 0; i < types.length; i += 1) {
-      types[i] = arguments[i + 1];
-    }
-  }
+  // flatten array arguments
+  const types = [].concat(...types_);
 
   // request content type
   const value = req.headers['content-type'];
