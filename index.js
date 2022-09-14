@@ -85,7 +85,7 @@ function normalize(type) {
 
   if (type[0] === '+') {
     // "+json" -> "*/*+json" expando
-    return '*/*' + type;
+    return `*/*${type}`;
   }
 
   return type.indexOf('/') === -1 ? mime.lookup(type) : type;
