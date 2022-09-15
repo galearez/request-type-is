@@ -33,7 +33,7 @@ describe('typeis(req, types)', function () {
 
   describe('when no body is given', function () {
     it('should return null', function () {
-      var req = { headers: {} };
+      var req = new request({});
 
       assert.strictEqual(typeis(req), null);
       assert.strictEqual(typeis(req, ['image/*']), null);
@@ -140,7 +140,7 @@ describe('typeis(req, types)', function () {
     });
 
     it('should not match body-less request', function () {
-      var req = { headers: { 'content-type': 'text/html' } };
+      var req = new request({ 'content-type': 'text/html' });
       assert.strictEqual(typeis(req, '*/*'), null);
     });
   });
@@ -173,24 +173,24 @@ describe('typeis(req, types)', function () {
 describe('typeis.hasBody(req)', function () {
   describe('content-length', function () {
     it('should indicate body', function () {
-      var req = { headers: { 'content-length': '1' } };
+      var req = new request({ 'Content-Length': '1' });
       assert.strictEqual(typeis.hasBody(req), true);
     });
 
     it('should be true when 0', function () {
-      var req = { headers: { 'content-length': '0' } };
+      var req = new request({ 'Content-Length': '0' });
       assert.strictEqual(typeis.hasBody(req), true);
     });
 
     it('should be false when bogus', function () {
-      var req = { headers: { 'content-length': 'bogus' } };
+      var req = new request({ 'Content-Length': 'bogus' });
       assert.strictEqual(typeis.hasBody(req), false);
     });
   });
 
   describe('transfer-encoding', function () {
     it('should indicate body', function () {
-      var req = { headers: { 'transfer-encoding': 'chunked' } };
+      var req = new request({ 'Transfer-Encoding': 'chunked' });
       assert.strictEqual(typeis.hasBody(req), true);
     });
   });
@@ -387,7 +387,7 @@ describe('typeis.is(mediaType, types)', function () {
     });
 
     it('should not check for body', function () {
-      var req = { headers: { 'content-type': 'text/html' } };
+      var req = new request({ 'Content-Type': 'text/html' });
 
       assert.strictEqual(typeis.is(req, ['html']), 'html');
       assert.strictEqual(typeis.is(req, ['jpeg']), false);
@@ -482,11 +482,22 @@ describe('typeis.normalize(type)', function () {
   });
 });
 
+// this calls mocks the Fetch API Request interface
+class request {
+  constructor({ ...a } = {}) {
+    this.headers = a;
+    this.headers = {
+      ...this.headers,
+      get(str) {
+        return this[str];
+      },
+    };
+  }
+}
+
 function createRequest(type) {
-  return {
-    headers: {
-      'content-type': type || undefined,
-      'transfer-encoding': 'chunked',
-    },
-  };
+  return new request({
+    'Content-Type': type || undefined,
+    'Transfer-Encoding': 'chunked',
+  });
 }

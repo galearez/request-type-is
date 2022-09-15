@@ -213,8 +213,8 @@ function typeIs(value, ...types_) {
 function hasBody(req) {
   return (
     // prettier-ignore
-    req.headers['transfer-encoding'] !== undefined
-    || !Number.isNaN(Number(req.headers['content-length']))
+    req.headers.get('Transfer-Encoding') !== undefined
+    || !Number.isNaN(Number(req.headers.get('Content-Length')))
   );
 }
 
@@ -257,7 +257,7 @@ function typeofrequest(req, ...types_) {
   const types = [].concat(...types_);
 
   // request content type
-  const value = req.headers['content-type'];
+  const value = req.headers.get('Content-Type');
 
   return typeIs(value, types);
 }
