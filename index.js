@@ -25,8 +25,12 @@ const mime = require('mime-types');
  */
 
 function normalizeType(value) {
+  // gets type from request when is a Request object
+  // prettier-ignore
+  const val = typeof value === 'object' ? value.headers.get('Content-Type') : value;
+
   // parse the type
-  const type = typer.parse(value);
+  const type = typer.parse(val);
 
   // remove the parameters
   type.parameters = undefined;
