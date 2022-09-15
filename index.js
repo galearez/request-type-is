@@ -17,10 +17,10 @@ const mime = require('mime-types');
 /**
  * Normalize a type and remove parameters.
  *
- * @param {string} value
- * @return {string}
- * @throws TypeError If the given type string is invalid
- * @throws TypeError If any of the given object values are invalid
+ * @param {string | Request} value - A `string` or `Request`
+ * with a type to normalize
+ * @return A `string` with the normalized value or `Error`
+ * if the type cannot be normalized
  * @private
  */
 
@@ -37,10 +37,13 @@ function normalizeType(value) {
 }
 
 /**
- * Try to normalize a type and remove parameters.
+ * This function is a wrapper of the normalizeType function,
+ * meant to handle the errors comming form the media-typer instances.
  *
- * @param {string} value
- * @return {string | null}
+ * @param {string | Request} value - A `string` or `Request` with
+ * a type to normalize
+ * @return A `string` with the normalized value or `null` if the
+ * type cannot be normalized
  * @private
  */
 
@@ -68,8 +71,9 @@ function tryNormalizeType(value) {
  * These three are the most common request body types
  * and are thus ensured to work.
  *
- * @param {string} type
- * @return {string | false | null}
+ * @param {string} type A `string` containing the type to normalize
+ * @return A `string` with the normalized value, `null` if
+ * cannot be normalized
  * @public
  */
 
@@ -96,13 +100,15 @@ function normalize(type) {
 }
 
 /**
- * Check if `expected` mime type
- * matches `actual` mime type with
+ * Check if `actual` mime type
+ * matches `expected` mime type with
  * wildcard and +suffix support.
  *
- * @param {string} expected
- * @param {string} actual
- * @return {boolean}
+ * @param {string | false} actual The result of normalize (i.e.
+ * a `string` or `false`)
+ * @param {string} expected What you expect the type to be
+ * @return A `boolean` indicating if actual and expected types
+ * match
  * @public
  */
 
@@ -153,13 +159,16 @@ function mimeMatch(expected, actual) {
  * If no types match, `false` is returned.
  * Otherwise, the first `type` that matches is returned.
  *
- * @param {string} value
- * @param {string[]} types_
- * @param {false | string}
+ * @param {string | Request} value A `string` or `Request` to
+ * compare with one or multiple types
+ * @param {string[] | string[][]} types_ An array of `string` | `string[]`
+ * to check if the type from **value** matches with one of these types
+ * @return `false` if there is not match or a `string` with the
+ * type if a match was found
  * @public
  */
 
-function typeis(value, ...types_) {
+function typeIs(value, ...types_) {
   let i;
 
   // remove parameters and normalize
@@ -170,7 +179,7 @@ function typeis(value, ...types_) {
     return false;
   }
 
-  // flatten arguments of string[]
+  // flatten arguments of string[], make a 2d array into a 1d array
   const types = [].concat(...types_);
 
   // no types, return the content type
@@ -196,12 +205,12 @@ function typeis(value, ...types_) {
  * or `content-length` headers set.
  * http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.3
  *
- * @param {object} req
- * @return {boolean}
+ * @param {Request} req A `Request` object
+ * @return `true` if the `Request` has a body, `false` if not
  * @public
  */
 
-function hasbody(req) {
+function hasBody(req) {
   return (
     // prettier-ignore
     req.headers['transfer-encoding'] !== undefined
@@ -230,25 +239,27 @@ function hasbody(req) {
  *
  *     this.is('html'); // => false
  *
- * @param {object}
- * @param {string[]} types_
- * @return {string | false | null}
+ * @param {Request} req A `Request` object
+ * @param {string[] | string[][]} types_ An array of `string` | `string[]`
+ * to check if the type of the **Request**, matches with one of these types
+ * @return A `string` with the match type, `null` if the request has
+ * no body or `false` if the types doesn't match
  * @public
  */
 
 function typeofrequest(req, ...types_) {
   // no body
-  if (!hasbody(req)) {
+  if (!hasBody(req)) {
     return null;
   }
 
-  // flatten arguments of string[]
+  // flatten arguments of string[], make a 2d array into a 1d array
   const types = [].concat(...types_);
 
   // request content type
   const value = req.headers['content-type'];
 
-  return typeis(value, types);
+  return typeIs(value, types);
 }
 
 /**
@@ -257,7 +268,7 @@ function typeofrequest(req, ...types_) {
  */
 
 module.exports = typeofrequest;
-module.exports.is = typeis;
-module.exports.hasBody = hasbody;
+module.exports.is = typeIs;
+module.exports.hasBody = hasBody;
 module.exports.normalize = normalize;
 module.exports.match = mimeMatch;
