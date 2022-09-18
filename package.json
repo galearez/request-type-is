@@ -11,19 +11,19 @@
   "files": [
     "LICENSE",
     "HISTORY.md",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "scripts": {
     "lint": "eslint .",
-    "test": "mocha --reporter spec --check-leaks --bail test/",
-    "test-ci": "nyc --reporter=lcovonly --reporter=text npm test",
-    "test-cov": "nyc --reporter=html --reporter=text npm test"
+    "test": "mocha --reporter spec --check-leaks --bail test/"
   },
   "dependencies": {
     "media-typer": "0.3.0",
     "mime-types": "^2.1.35"
   },
   "devDependencies": {
+    "@types/node": "^18.7.18",
     "eslint-config-airbnb-base": "^15.0.0",
     "mocha": "^10.0.0",
     "nyc": "15.1.0"
