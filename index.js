@@ -272,7 +272,7 @@ function typeofrequest(req, ...types_) {
  */
 
 module.exports = typeofrequest;
-module.exports.is = typeIs;
+module.exports.typeIs = typeIs;
 module.exports.hasBody = hasBody;
 module.exports.normalize = normalize;
-module.exports.match = mimeMatch;
+module.exports.mimeMatch = mimeMatch;
