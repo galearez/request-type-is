@@ -67,7 +67,7 @@ export function mimeMatch(actual: false, expected: string): false;
  */
 
 export function typeIs(
-  value: string,
+  value: string | Request,
   ...types_: string[] | string[][]
 ): false | string;
 
