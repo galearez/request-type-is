@@ -1,7 +1,7 @@
 {
   "name": "request-type-is",
   "description": "Infer the content-type of a request using Fetch API interfaces.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Josep Galearez",
   "license": "MIT",
   "repository": "galearez/request-type-is",
