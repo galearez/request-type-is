@@ -113,7 +113,7 @@ export function hasBody(req: Request): boolean;
  * @public
  */
 
-export default function typeOfRequest(
+export default function requestTypeIs(
   req: Request,
   ...types_: string[]
 ): null | false | string;

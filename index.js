@@ -251,7 +251,7 @@ function hasBody(req) {
  * @public
  */
 
-function typeofrequest(req, ...types_) {
+function requestTypeIs(req, ...types_) {
   // no body
   if (!hasBody(req)) {
     return null;
@@ -271,7 +271,7 @@ function typeofrequest(req, ...types_) {
  * @public
  */
 
-module.exports = typeofrequest;
+module.exports = requestTypeIs;
 module.exports.typeIs = typeIs;
 module.exports.hasBody = hasBody;
 module.exports.normalize = normalize;
